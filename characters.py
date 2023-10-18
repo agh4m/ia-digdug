@@ -108,6 +108,10 @@ class DigDug(Character):
             self.pos = new_pos
             mapa.dig(self.pos)
 
+    def respawn(self):
+        self._direction = Direction.EAST
+        return super().respawn()
+
 
 class Enemy(Character):
     def __init__(self, pos, name, speed, smart, wallpass, lives=MIN_ENEMY_LIFE):

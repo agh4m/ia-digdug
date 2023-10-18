@@ -87,7 +87,7 @@ class GameServer:
         if self.current_player:
             await self.current_player.ws.send(json.dumps(game_info))
 
-    async def incomming_handler(self, websocket: WebSocketCommonProtocol, path: str):
+    async def incoming_handler(self, websocket: WebSocketCommonProtocol, path: str):
         """Process new clients arriving at the server."""
         try:
             async for message in websocket:
@@ -151,7 +151,6 @@ class GameServer:
 
                     state = await self.game.next_frame()
                     state["player"] = self.current_player.name
-                    state["score"] = self.game._score
 
                     state = json.dumps(state)
 
@@ -168,7 +167,6 @@ class GameServer:
 
                 game_info = self.game.info()
                 game_info["player"] = self.current_player.name
-                game_info["score"] = self.game._score
 
                 await self.send_info(game_info, highscores=True)
                 await self.current_player.ws.close()
@@ -209,7 +207,7 @@ if __name__ == "__main__":
         game_loop_task = asyncio.ensure_future(g.mainloop())
 
         logger.info("Listenning @ %s:%s", args.bind, args.port)
-        websocket_server = websockets.serve(g.incomming_handler, args.bind, args.port)
+        websocket_server = websockets.serve(g.incoming_handler, args.bind, args.port)
 
         await asyncio.gather(websocket_server, game_loop_task)
 
